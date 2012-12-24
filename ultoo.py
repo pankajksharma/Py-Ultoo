@@ -17,6 +17,7 @@ class Client:
             self.cj = None
             self.useragent = useragent
             self.islogin = False
+            self.sessid = None 		#Session Id
             self.base = r'http://ultoo.com'
 
     """Basic Authentication"""
@@ -72,6 +73,8 @@ class Client:
 		    #print c
                     #if len(c.value)=='yes':  #success login returns a longer string, but it is hard to tell exactly TODO
                     print 'Login successful'
+                    self.sessid = re.findall("zxcoiesesscd=[0-9]*", raw_html)[0].split('=')[1]
+                    #print self.sessid
                     self.islogin = True
                     cj.save(self.number+'.cookie', False, False)
                     self.cj = cj
@@ -85,7 +88,7 @@ class Client:
 
     def sendsms(self,number,message):
         self.auth()
-	url = self.base + r'/home.php'
+	url = self.base + r'/home.php?zxcoiesesscd='+self.sessid
 	#print url
         opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cj))
         opener.addheaders = [
